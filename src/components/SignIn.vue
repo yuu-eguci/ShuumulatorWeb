@@ -20,7 +20,7 @@
           </template>
 
           <template #lead>
-            This page is solidly locked. Type your invitation code.
+            {{ $t('signin') }}
           </template>
 
           <p>
