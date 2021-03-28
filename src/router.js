@@ -16,6 +16,12 @@ const routes = [
     component: () => import('./components/SignIn.vue'),
     meta: {},
   },
+  {
+    path: '/port',
+    name: 'Port',
+    component: () => import('./components/Port.vue'),
+    meta: {},
+  },
 ];
 
 const router = new Router({
