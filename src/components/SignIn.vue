@@ -27,6 +27,7 @@
             <b-form-input v-model="invitationCode"
                           @input="inspectInvitationCode"
                           :disabled="loading"
+                          autocomplete="off"
                           ref="focusThis"
                           size="lg" />
           </p>
