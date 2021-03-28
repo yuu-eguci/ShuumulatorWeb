@@ -8,19 +8,22 @@
                   variant="outline-primary"
                   size="lg"
                   block>
-          ポートフォリオを閲覧
+          <b-icon icon="journal-bookmark" />
+          {{ $t('top.button1') }}
         </b-button>
         <b-button :to="'/realized'"
                   variant="outline-primary"
                   size="lg"
                   block>
-          今んとこどんな感じ?
+          <b-icon icon="calculator" />
+          {{ $t('top.button2') }}
         </b-button>
         <b-button variant="outline-danger"
                   size="lg"
                   block
                   class="mt-5">
-          サインアウト
+          {{ $t('top.button3') }}
+          <b-icon icon="box-arrow-right" />
         </b-button>
       </b-col>
       <b-col md="2">

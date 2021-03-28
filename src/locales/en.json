@@ -1,3 +1,8 @@
 {
-  "signin": "This page is solidly locked. Type your invitation code."
+  "signin": "This page is solidly locked. Type your invitation code.",
+  "top": {
+    "button1": "View my portfolio",
+    "button2": "How is it going on so far?",
+    "button3": "Sign out"
+  }
 }
