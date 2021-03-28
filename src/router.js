@@ -33,6 +33,11 @@ const routes = [
 const router = new Router({
   mode: 'history',
   routes,
+  // NOTE: GitHub Pages で ...io/ShuumulatorWeb/ パスを使うときは、
+  //       vue.config.js publicPath に加えてコレが必要です。
+  // NOTE: ローカルで実行するときの動作が心配になるけれど、なんと問題ない。
+  //       localhost/ShuumulatorWeb/ 下で実行される。驚き。
+  base: '/ShuumulatorWeb/',
 });
 
 // ページ遷移ごとに発生する処理です。
