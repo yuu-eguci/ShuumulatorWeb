@@ -22,6 +22,12 @@ const routes = [
     component: () => import('./components/Port.vue'),
     meta: {},
   },
+  {
+    path: '/realized',
+    name: 'Realized',
+    component: () => import('./components/Realized.vue'),
+    meta: {},
+  },
 ];
 
 const router = new Router({
