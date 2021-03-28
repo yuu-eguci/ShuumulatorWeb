@@ -10,6 +10,12 @@ const routes = [
     component: () => import('./components/HelloWorld.vue'),
     meta: {},
   },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: () => import('./components/SignIn.vue'),
+    meta: {},
+  },
 ];
 
 const router = new Router({
