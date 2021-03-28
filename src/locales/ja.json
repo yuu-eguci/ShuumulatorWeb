@@ -4,5 +4,15 @@
     "button1": "ポートフォリオを閲覧",
     "button2": "今んとこどんな感じ?",
     "button3": "サインアウト"
+  },
+  "port": {
+    "label": {
+      "code": "銘柄コード",
+      "name": "銘柄",
+      "boughtAt": "購入日",
+      "buy": "購入価格",
+      "currentPrice": "現在価格",
+      "profit": "損益"
+    }
   }
 }

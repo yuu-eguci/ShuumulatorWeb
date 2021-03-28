@@ -4,5 +4,15 @@
     "button1": "View my portfolio",
     "button2": "How is it going on so far?",
     "button3": "Sign out"
+  },
+  "port": {
+    "label": {
+      "code": "Code",
+      "name": "Name",
+      "boughtAt": "Bought at",
+      "buy": "Buy",
+      "currentPrice": "Current price",
+      "profit": "profit or loss"
+    }
   }
 }

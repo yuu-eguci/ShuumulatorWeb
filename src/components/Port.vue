@@ -24,6 +24,25 @@
           :responsive="true"
           class="text-nowrap mt-3"
         >
+          <!-- NOTE: $t を使うため script 内ではなく template 内でラベルを定義しています。 -->
+          <template v-slot:head(code)="">
+            {{$t('port.label.code')}}
+          </template>
+          <template v-slot:head(name)="">
+            {{$t('port.label.name')}}
+          </template>
+          <template v-slot:head(boughtAt)="">
+            {{$t('port.label.boughtAt')}}
+          </template>
+          <template v-slot:head(buy)="">
+            {{$t('port.label.buy')}}
+          </template>
+          <template v-slot:head(currentPrice)="">
+            {{$t('port.label.currentPrice')}}
+          </template>
+          <template v-slot:head(profit)="">
+            {{$t('port.label.profit')}}
+          </template>
         </b-table>
       </b-col>
       <b-col md="2">
@@ -52,37 +71,37 @@ export default {
       innerFields: [
         {
           key: 'code',
-          label: '銘柄コード',
+          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
         },
         {
           key: 'name',
-          label: '銘柄',
+          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
         },
         {
           key: 'boughtAt',
-          label: '購入日',
+          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
         },
         {
           key: 'buy',
-          label: '購入価格',
+          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
         },
         {
           key: 'currentPrice',
-          label: '現在価格',
+          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
         },
         {
           key: 'profit',
-          label: '損益',
+          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
         },
