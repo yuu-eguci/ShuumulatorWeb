@@ -6,8 +6,8 @@ Vue.use(Router);
 const routes = [
   {
     path: '/',
-    name: 'HelloWorld',
-    component: () => import('./components/HelloWorld.vue'),
+    name: 'Top',
+    component: () => import('./components/Top.vue'),
     meta: {},
   },
   {
