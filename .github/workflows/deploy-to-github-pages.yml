@@ -35,4 +35,3 @@ jobs:
       with:
         personal_token: ${{ secrets.PERSONAL_TOKEN }}
         publish_dir: ./dist
-        cname: ${{ secrets.CUSTOM_DOMAIN_FOR_THIS_REPOSITORY }}
