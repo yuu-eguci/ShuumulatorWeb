@@ -88,7 +88,7 @@ export default {
 
   async mounted () {
 
-    // 
+    // TODO: まだ、ほしい chart のかたちになっていないが、それはのちに。
     this.fillData()
 
   },
