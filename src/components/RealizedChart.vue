@@ -13,7 +13,12 @@ export default {
 
   // NOTE: renderChart で使っている chartData は mixin に渡される prop です。
   //       そのためここの props に記述する必要がありません。
-  props: ['options'],
+  props: {
+    options: {
+      type: Object,
+      required: true,
+    },
+  },
 
   mounted () {
     // this.chartData is created in the mixin.
