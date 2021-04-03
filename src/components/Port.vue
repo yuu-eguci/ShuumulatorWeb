@@ -1,52 +1,52 @@
 <template>
   <div>
     <b-row>
-      <b-col md="2">
-      </b-col>
+      <b-col md="2" />
       <b-col md="8">
         <div>
-          <b-button :to="'/'"
-                    variant="outline-primary"
-                    class="btn-circle"
-                    size="lg">
+          <b-button
+            :to="'/'"
+            variant="outline-primary"
+            class="btn-circle"
+            size="lg"
+          >
             <b-icon icon="arrow-left" />
           </b-button>
         </div>
         <b-table
+          ref="mainTable"
           hover
           small
           :items="mainTableItems"
           :filter="'meaninglessCriteria'"
           :filter-function="filterTable"
           :fields="visibleFields"
-          ref="mainTable"
           sort-icon-left
           :responsive="true"
           class="text-nowrap mt-3"
         >
           <!-- NOTE: $t を使うため script 内ではなく template 内でラベルを定義しています。 -->
-          <template v-slot:head(code)="">
-            {{$t('port.label.code')}}
+          <template #head(code)="">
+            {{ $t('port.label.code') }}
           </template>
-          <template v-slot:head(name)="">
-            {{$t('port.label.name')}}
+          <template #head(name)="">
+            {{ $t('port.label.name') }}
           </template>
-          <template v-slot:head(boughtAt)="">
-            {{$t('port.label.boughtAt')}}
+          <template #head(boughtAt)="">
+            {{ $t('port.label.boughtAt') }}
           </template>
-          <template v-slot:head(buy)="">
-            {{$t('port.label.buy')}}
+          <template #head(buy)="">
+            {{ $t('port.label.buy') }}
           </template>
-          <template v-slot:head(currentPrice)="">
-            {{$t('port.label.currentPrice')}}
+          <template #head(currentPrice)="">
+            {{ $t('port.label.currentPrice') }}
           </template>
-          <template v-slot:head(profit)="">
-            {{$t('port.label.profit')}}
+          <template #head(profit)="">
+            {{ $t('port.label.profit') }}
           </template>
         </b-table>
       </b-col>
-      <b-col md="2">
-      </b-col>
+      <b-col md="2" />
     </b-row>
   </div>
 </template>

@@ -1,21 +1,27 @@
 <template>
   <div>
     <b-row>
-      <b-col md="2">
-      </b-col>
+      <b-col md="2" />
       <b-col md="8">
-        <b-jumbotron :bg-variant="locked ? 'info' : 'success'" text-variant="light">
+        <b-jumbotron
+          :bg-variant="locked ? 'info' : 'success'"
+          text-variant="light"
+        >
           <template #header>
             <div class="text-center">
-              <b-icon v-if="locked"
-                      icon="lock"
-                      class="border border-light rounded p-2"
-                      :animation="iconAnimation"
-                      font-scale="2" />
-              <b-icon v-else
-                      icon="unlock"
-                      class="border border-light rounded p-2"
-                      font-scale="2" />
+              <b-icon
+                v-if="locked"
+                icon="lock"
+                class="border border-light rounded p-2"
+                :animation="iconAnimation"
+                font-scale="2"
+              />
+              <b-icon
+                v-else
+                icon="unlock"
+                class="border border-light rounded p-2"
+                font-scale="2"
+              />
             </div>
           </template>
 
@@ -24,17 +30,18 @@
           </template>
 
           <p>
-            <b-form-input v-model="invitationCode"
-                          @input="inspectInvitationCode"
-                          :disabled="loading"
-                          autocomplete="off"
-                          ref="focusThis"
-                          size="lg" />
+            <b-form-input
+              ref="focusThis"
+              v-model="invitationCode"
+              :disabled="loading"
+              autocomplete="off"
+              size="lg"
+              @input="inspectInvitationCode"
+            />
           </p>
         </b-jumbotron>
       </b-col>
-      <b-col md="2">
-      </b-col>
+      <b-col md="2" />
     </b-row>
   </div>
 </template>

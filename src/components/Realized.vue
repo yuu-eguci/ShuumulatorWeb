@@ -1,12 +1,14 @@
 <template>
   <div>
     <b-row>
-      <b-col md="2">
-      </b-col>
+      <b-col md="2" />
       <b-col md="8">
         <b-row>
           <b-col md="6">
-            <b-card no-body class="p-3">
+            <b-card
+              no-body
+              class="p-3"
+            >
               <b-card-text>
                 現在の勝率: 79%
               </b-card-text>
@@ -22,30 +24,36 @@
             </b-card>
           </b-col>
           <b-col md="6">
-            <b-card no-body class="p-3">
+            <b-card
+              no-body
+              class="p-3"
+            >
               <b-card-text>
                 グラフの目盛り
               </b-card-text>
               <b-card-text>
-                <b-form-select v-model="selectedScale"
-                               :options="[
-                                 { value: 'all', text: 'すべて' },
-                                 { value: 'month', text: '月ごと' },
-                                 { value: 'week', text: '週ごと' },
-                                 { value: 'day', text: '日ごと' },
-                               ]"
-                               :disabled="loading" />
+                <b-form-select
+                  v-model="selectedScale"
+                  :options="[
+                    { value: 'all', text: 'すべて' },
+                    { value: 'month', text: '月ごと' },
+                    { value: 'week', text: '週ごと' },
+                    { value: 'day', text: '日ごと' },
+                  ]"
+                  :disabled="loading"
+                />
               </b-card-text>
             </b-card>
           </b-col>
           <b-col md="12">
-            <RealizedChart :chartData="datacollection"
-                           :options="options" />
+            <RealizedChart
+              :chart-data="datacollection"
+              :options="options"
+            />
           </b-col>
         </b-row>
       </b-col>
-      <b-col md="2">
-      </b-col>
+      <b-col md="2" />
     </b-row>
   </div>
 </template>
