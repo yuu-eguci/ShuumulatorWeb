@@ -11,7 +11,8 @@ export default {
         'Authorization': `JWT ${jwtToken}`,
       },
       responseType: 'json',
-    });
+      // withCredentials: true,  今回は jwt なのでこれは必要ないはず?
+  });
 
   },
 
