@@ -117,7 +117,21 @@ export default {
       datacollection: null,
       options: {
         responsive: true,
-        maintainAspectRatio: false
+        scales: {
+          yAxes: [{
+            stacked: true,
+            ticks: {
+              beginAtZero: true,
+            },
+          }],
+          xAxes: [{
+            stacked: true,
+            ticks: {
+              beginAtZero: true,
+            },
+          }]
+        },
+        maintainAspectRatio: false,
       },
 
     };
@@ -162,24 +176,41 @@ export default {
     },
 
     fillData: function () {
-      this.datacollection = {
-        labels: [this.getRandomInt(), this.getRandomInt()],
+
+      // NOTE: Stacked Bar chart の設定はこんなふうに行う。
+      const data = {
+        labels: ['foo', 'bar'],
         datasets: [
           {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [this.getRandomInt(), this.getRandomInt()]
-          }, {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [this.getRandomInt(), this.getRandomInt()]
-          }
-        ]
-      }
-    },
+            label: 'ひとつめのデータセット',
+            data: [65, 59],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 159, 64, 0.2)',
+            ],
+            borderColor: [
+              'rgb(255, 99, 132)',
+              'rgb(255, 159, 64)',
+            ],
+            borderWidth: 1,
+          },
+          {
+            label: 'ふたつめのデータセット',
+            data: [-15, -25],
+            backgroundColor: [
+              'rgba(255, 205, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+            ],
+            borderColor: [
+              'rgb(255, 205, 86)',
+              'rgb(75, 192, 192)',
+            ],
+            borderWidth: 1,
+          },
+        ],
+      };
+      this.datacollection = data;
 
-    getRandomInt: function () {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5
     },
 
     onChangeSelect: async function () {

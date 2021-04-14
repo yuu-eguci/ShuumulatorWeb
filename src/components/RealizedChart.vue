@@ -1,13 +1,13 @@
 <script>
 // 本 vue には template を書きません。
-import { Line, mixins } from 'vue-chartjs';
+import { Bar, mixins } from 'vue-chartjs';
 const { reactiveProp } = mixins;
 
 export default {
 
   name: 'RealizedChart',
 
-  extends: Line,
+  extends: Bar,
 
   mixins: [reactiveProp],
 
