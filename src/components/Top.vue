@@ -39,6 +39,7 @@
 
 <script>
 import Cookies from 'js-cookie';
+import pnotifyUtils from '@/utils/pnotifyUtils';
 
 export default {
 
@@ -70,6 +71,7 @@ export default {
       // 認証 token 削除と、サインインページへの移動。
       Cookies.remove('token');
       this.$router.push({ name: 'SignIn' });
+      pnotifyUtils.popHidingSuccess('You have successfully signed out. Bye bye.');
 
     },
 

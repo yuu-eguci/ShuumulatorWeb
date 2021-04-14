@@ -59,6 +59,7 @@
 <script>
 import axiosUtils from '@/utils/axiosUtils';
 import Cookies from 'js-cookie';
+import pnotifyUtils from '@/utils/pnotifyUtils';
 
 const fetchPortfolio = async function () {
 
@@ -164,6 +165,8 @@ export default {
 
   async mounted () {
 
+    pnotifyUtils.popHidingNotice('Fetching your portfolio. Please wait...');
+
     this.loading = true;
     let i = 0;
     const intervalId2 = setInterval(() => {
@@ -181,6 +184,9 @@ export default {
         this.loadingText = '';
         clearInterval(intervalId);
         clearInterval(intervalId2);
+
+        pnotifyUtils.popHidingSuccess('Your portfolio successfully loaded.');
+
         return;
       }
 

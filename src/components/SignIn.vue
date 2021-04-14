@@ -49,6 +49,7 @@
 <script>
 import axiosUtils from '@/utils/axiosUtils';
 import Cookies from 'js-cookie';
+import pnotifyUtils from '@/utils/pnotifyUtils';
 
 export default {
 
@@ -79,6 +80,8 @@ export default {
 
       // コードには everybody-dance-now を認めている。
       if (this.invitationCode === 'everybody-dance-now') {
+
+        pnotifyUtils.popHidingNotice('Invitation code accepted. Verifying...');
 
         // Disable input.
         this.loading = true;
@@ -125,6 +128,8 @@ export default {
       // ロック -> アンロックアイコンにチェンジ。
       setTimeout(() => {
         this.locked = false;
+
+        pnotifyUtils.popHidingSuccess('SignIn succeeded.');
 
         // アンロックアイコンを見せたあと、遷移します。
         setTimeout(() => {

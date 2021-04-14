@@ -79,6 +79,7 @@
 import RealizedChart from '@/components/RealizedChart.vue';
 import axiosUtils from '@/utils/axiosUtils';
 import Cookies from 'js-cookie';
+import pnotifyUtils from '@/utils/pnotifyUtils';
 
 const fetchRealized = async function (each) {
 
@@ -253,6 +254,8 @@ export default {
 
     fetchAndUpdateData: async function () {
 
+      pnotifyUtils.popHidingNotice('Fetching your realized profit, and loss, sometimes...');
+
       this.loading = true;
       let i = 0;
       const intervalId = setInterval(() => {
@@ -267,6 +270,9 @@ export default {
         this.updateData(result);
         this.loading = false;
         this.loadingText = '';
+
+        pnotifyUtils.popHidingSuccess('Your realized profit and loss successfully loaded.');
+
         clearInterval(intervalId);
 
       }, 2000);
