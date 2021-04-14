@@ -47,6 +47,9 @@
 </template>
 
 <script>
+import axiosUtils from '@/utils/axiosUtils';
+import Cookies from 'js-cookie'
+
 export default {
 
   name: 'SignIn',
@@ -72,17 +75,38 @@ export default {
 
   methods: {
 
-    inspectInvitationCode: function () {
-
-      console.info(this.invitationCode);
+    inspectInvitationCode: async function () {
 
       // コードには everybody-dance-now を認めている。
       if (this.invitationCode === 'everybody-dance-now') {
-      // if (this.invitationCode === 'aaaa') {
+
+        // Disable input.
+        this.loading = true;
 
         // ロックアイコンをアニメートしたあと遷移します。
 
-        // TODO: JWT を実装。
+        // これを再現したいんだけど -d の部分がどうしても Django へ渡らない……。
+        // curl -X POST -d "code=everybody-dance-now" http://localhost:8000/api-token-auth/
+        // Django に json で post しても受け付けてくれない。
+        // ↓
+        // application/x-www-form-urlencoded でおくんないとだめだったか。
+        // axios で application/x-www-form-urlencoded を送るときは URLSearchParams を使わないとだめ。
+        // ↓
+        // 渡らない理由は Django 側で json post を受け付けなかったからだった。
+        const axiosInstance = axiosUtils.createAxiosInstance();
+        const response = await axiosInstance.post(`/api-token-auth/`, {
+          code: this.invitationCode,
+        }).catch(err => {
+          return err.response;
+        });
+        // NOTE: CORS でひっかかると response が undefined。
+        if (response.status !== 200) {
+          console.error(response);
+          return;
+        }
+        // サインインに成功すると {token: jwt token} が返ってきます。
+        // Cookie に保存する。
+        Cookies.set('token', response.data.token);
 
         this.animateUnlock();
 
@@ -91,8 +115,6 @@ export default {
     },
 
     animateUnlock: function () {
-
-      console.info('animateUnlock');
 
       // Disable input.
       this.loading = true;
