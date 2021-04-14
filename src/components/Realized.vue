@@ -114,7 +114,7 @@ export default {
       //       https://vue-chartjs.org/ja/guide/#最初のチャートの作成
       //       > チャート毎に必要なオブジェクト構造は公式 Chart.js docsをチェックしてください。
       //       > https://www.chartjs.org/docs/latest/#creating-a-chart
-      datacollection: null,
+      datacollection: {},
       options: {
         responsive: true,
         scales: {
@@ -159,8 +159,6 @@ export default {
 
     updateData: function (rawData) {
 
-      console.info(rawData);
-
       this.selectedEach = rawData.each;
       this.winRate = Math.round(rawData['win_rate'] * 100);
       this.totalGain = (rawData['total_gain'] * 100).toLocaleString();
@@ -170,45 +168,79 @@ export default {
       const profitPrefix = realizedProfit >= 0 ? '+' : '-';
       this.realizedProfit = profitPrefix + realizedProfit.toLocaleString();
 
-      // TODO: チャートを更新。
-      this.fillData();
+      // チャートを更新。
+      this.fillData(rawData.realized);
 
     },
 
-    fillData: function () {
+    fillData: function (realizedDataList) {
 
       // NOTE: Stacked Bar chart の設定はこんなふうに行う。
+      // const data = {
+      //   labels,
+      //   datasets: [
+      //     {
+      //       label: 'ひとつめのデータセット',
+      //       data: [65, 59],
+      //       backgroundColor: [
+      //         'rgba(255, 99, 132, 0.2)',
+      //         'rgba(255, 159, 64, 0.2)',
+      //       ],
+      //       borderColor: [
+      //         'rgb(255, 99, 132)',
+      //         'rgb(255, 159, 64)',
+      //       ],
+      //       borderWidth: 1,
+      //     },
+      //     {
+      //       label: 'ふたつめのデータセット',
+      //       data: [-15, -25],
+      //       backgroundColor: [
+      //         'rgba(255, 205, 86, 0.2)',
+      //         'rgba(75, 192, 192, 0.2)',
+      //       ],
+      //       borderColor: [
+      //         'rgb(255, 205, 86)',
+      //         'rgb(75, 192, 192)',
+      //       ],
+      //       borderWidth: 1,
+      //     },
+      //   ],
+      // };
+
+      // データはたくさん飛んでくるけれど、グラフに表示するのは12個くらいにしておきます。
+      // NOTE: 時系列順に飛んでくるので、リスト最後の12個を取得します。
+      const realizedDataListForChart = realizedDataList.slice(realizedDataList.length - 12, realizedDataList.length);
+
+      // ラベルの一覧を作ります。
+      const labels = realizedDataListForChart.map(x => x.label);
+
+      // データセットその1、 gain の一覧を作ります。
+      const datasetGain = {
+        label: 'Gain',
+        data: realizedDataListForChart.map(x => x.gain * 100),
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgb(255, 99, 132)',
+        borderWidth: 1,
+      };
+      // データセットその2、 lost の一覧を作ります。
+      const datasetLost = {
+        label: 'Lost',
+        data: realizedDataListForChart.map(x => -x.lost * 100),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 1,
+      };
+
+      // Chart に渡すときはこの形式にしないといけません。
       const data = {
-        labels: ['foo', 'bar'],
+        labels,
         datasets: [
-          {
-            label: 'ひとつめのデータセット',
-            data: [65, 59],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(255, 159, 64, 0.2)',
-            ],
-            borderColor: [
-              'rgb(255, 99, 132)',
-              'rgb(255, 159, 64)',
-            ],
-            borderWidth: 1,
-          },
-          {
-            label: 'ふたつめのデータセット',
-            data: [-15, -25],
-            backgroundColor: [
-              'rgba(255, 205, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-            ],
-            borderColor: [
-              'rgb(255, 205, 86)',
-              'rgb(75, 192, 192)',
-            ],
-            borderWidth: 1,
-          },
+          datasetGain,
+          datasetLost,
         ],
       };
+
       this.datacollection = data;
 
     },
