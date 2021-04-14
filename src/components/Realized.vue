@@ -239,12 +239,20 @@ export default {
         borderWidth: 1,
       };
 
+      const datasetBalance = {
+        label: 'Balance',
+        type: 'line',
+        data: realizedDataListForChart.map(x => (x.gain - x.lost) * 100),
+        borderColor: "rgb(154, 162, 235)",
+      };
+
       // Chart に渡すときはこの形式にしないといけません。
       const data = {
         labels,
         datasets: [
           datasetGain,
           datasetLost,
+          datasetBalance,
         ],
       };
 
