@@ -10,16 +10,16 @@
               class="p-3"
             >
               <b-card-text>
-                現在の勝率: {{ winRate }}%
+                {{ $t('realized.winRate') }}: {{ winRate }}%
               </b-card-text>
               <b-card-text class="text-danger">
-                総獲得額: {{ totalGain }}円
+                {{ $t('realized.totalGain') }}: {{ totalGain }}{{ $t('realized.yen') }}
               </b-card-text>
               <b-card-text class="text-success">
-                総損失額: {{ totalLost }}円
+                {{ $t('realized.totalLost') }}: {{ totalLost }}{{ $t('realized.yen') }}
               </b-card-text>
               <b-card-text>
-                実現損益: {{ realizedProfit }}円
+                {{ $t('realized.realized') }}: {{ realizedProfit }}{{ $t('realized.yen') }}
               </b-card-text>
             </b-card>
           </b-col>
@@ -29,16 +29,16 @@
               class="p-3"
             >
               <b-card-text>
-                グラフの目盛り
+                {{ $t('realized.graphScale') }}
               </b-card-text>
               <b-card-text>
                 <b-form-select
                   v-model="selectedEach"
                   :options="[
-                    { value: 'year', text: '年ごと' },
-                    { value: 'month', text: '月ごと' },
-                    { value: 'week', text: '週ごと' },
-                    { value: 'day', text: '日ごと' },
+                    { value: 'year', text: $t('realized.eachYear') },
+                    { value: 'month', text: $t('realized.eachMonth') },
+                    { value: 'week', text: $t('realized.eachWeek') },
+                    { value: 'day', text: $t('realized.eachDay') },
                   ]"
                   :disabled="loading"
                   @change="onChangeSelect"

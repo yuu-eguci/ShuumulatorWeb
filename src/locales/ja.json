@@ -14,5 +14,17 @@
       "currentPrice": "現在価格",
       "profit": "損益"
     }
+  },
+  "realized": {
+    "winRate": "現在の勝率",
+    "totalGain": "総獲得額",
+    "totalLost": "総損失額",
+    "realized": "実現損益",
+    "graphScale": "グラフの目盛り",
+    "yen": "円",
+    "eachYear": "年ごと",
+    "eachMonth": "月ごと",
+    "eachWeek": "週ごと",
+    "eachDay": "日ごと"
   }
 }

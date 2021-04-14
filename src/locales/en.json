@@ -14,5 +14,17 @@
       "currentPrice": "Current price",
       "profit": "profit or loss"
     }
+  },
+  "realized": {
+    "winRate": "Current win rate",
+    "totalGain": "Total gain",
+    "totalLost": "Total lost",
+    "realized": "Realized",
+    "graphScale": "Scales of the graph",
+    "yen": "YEN",
+    "eachYear": "Each year",
+    "eachMonth": "Each month",
+    "eachWeek": "Each week",
+    "eachDay": "Each day"
   }
 }
