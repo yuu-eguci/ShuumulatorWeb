@@ -10,16 +10,16 @@
               class="p-3"
             >
               <b-card-text>
-                現在の勝率: 79%
+                現在の勝率: {{ winRate }}%
+              </b-card-text>
+              <b-card-text class="text-danger">
+                総獲得額: {{ totalGain }}円
+              </b-card-text>
+              <b-card-text class="text-success">
+                総損失額: {{ totalLost }}円
               </b-card-text>
               <b-card-text>
-                総獲得額: 2,598円
-              </b-card-text>
-              <b-card-text>
-                総損失額: 2,598円
-              </b-card-text>
-              <b-card-text>
-                実現損益: +2,598円
+                実現損益: {{ realizedProfit }}円
               </b-card-text>
             </b-card>
           </b-col>
@@ -33,9 +33,9 @@
               </b-card-text>
               <b-card-text>
                 <b-form-select
-                  v-model="selectedScale"
+                  v-model="selectedEach"
                   :options="[
-                    { value: 'all', text: 'すべて' },
+                    { value: 'year', text: '年ごと' },
                     { value: 'month', text: '月ごと' },
                     { value: 'week', text: '週ごと' },
                     { value: 'day', text: '日ごと' },
@@ -60,6 +60,26 @@
 
 <script>
 import RealizedChart from '@/components/RealizedChart.vue';
+import axiosUtils from '@/utils/axiosUtils';
+import Cookies from 'js-cookie';
+
+const fetchRealized = async function () {
+
+  // cookie から jwt token を取得します。
+  const token = Cookies.get('token');
+
+  // /api/v1/realized を取得します。
+  const axiosInstance = axiosUtils.createAxiosInstance(token);
+  const response = await axiosInstance.get('/api/v1/realized/1').catch(err => {
+    return err.response;
+  });
+  if (response.status !== 200) {
+    console.error(response);
+    return;
+  }
+  return response.data;
+
+};
 
 export default {
 
@@ -77,7 +97,12 @@ export default {
       loading: false,
 
       // 検索用の data です。
-      selectedScale: 'all',
+      selectedEach: 'year',
+
+      winRate: '0',
+      totalGain: '0',
+      totalLost: '0',
+      realizedProfit: '0',
 
       // chartjs へ渡すデータです。
       // NOTE: データ形式は公式サイトを参照します。
@@ -96,14 +121,40 @@ export default {
 
   async mounted () {
 
+    const result = await fetchRealized();
+    this.updateData(result);
+    // each: "year"
+    // realized: Array(1)
+    //   0: {gain: 13951.1, lost: 11385.4, label: "2021"}
+    // total_gain: 13951.1
+    // total_lost: 11385.4
+    // user_id: "1"
+    // win_rate: 0.6192560175054704
+
     // TODO: まだ、ほしい chart のかたちになっていないが、それはのちに。
-    this.fillData()
+    // this.fillData()
 
   },
 
   methods: {
 
-    fillData () {
+    updateData: function (rawData) {
+
+      this.selectedEach = rawData.each;
+      this.winRate = Math.round(rawData['win_rate'] * 100);
+      this.totalGain = (rawData['total_gain'] * 100).toLocaleString();
+      this.totalLost = (rawData['total_lost'] * 100).toLocaleString();
+
+      const realizedProfit = (rawData['total_gain'] - rawData['total_lost']) * 100;
+      const profitPrefix = realizedProfit >= 0 ? '+' : '-';
+      this.realizedProfit = profitPrefix + realizedProfit.toLocaleString();
+
+      // TODO: チャートを更新。
+      this.fillData();
+
+    },
+
+    fillData: function () {
       this.datacollection = {
         labels: [this.getRandomInt(), this.getRandomInt()],
         datasets: [
@@ -119,7 +170,8 @@ export default {
         ]
       }
     },
-    getRandomInt () {
+
+    getRandomInt: function () {
       return Math.floor(Math.random() * (50 - 5 + 1)) + 5
     }
 
