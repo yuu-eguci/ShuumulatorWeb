@@ -41,6 +41,7 @@
                     { value: 'day', text: '日ごと' },
                   ]"
                   :disabled="loading"
+                  @change="onChangeSelect"
                 />
               </b-card-text>
             </b-card>
@@ -63,14 +64,18 @@ import RealizedChart from '@/components/RealizedChart.vue';
 import axiosUtils from '@/utils/axiosUtils';
 import Cookies from 'js-cookie';
 
-const fetchRealized = async function () {
+const fetchRealized = async function (each) {
 
   // cookie から jwt token を取得します。
   const token = Cookies.get('token');
 
   // /api/v1/realized を取得します。
   const axiosInstance = axiosUtils.createAxiosInstance(token);
-  const response = await axiosInstance.get('/api/v1/realized/1').catch(err => {
+  const response = await axiosInstance.get('/api/v1/realized/1', {
+    params: {
+      each,
+    },
+  }).catch(err => {
     return err.response;
   });
   if (response.status !== 200) {
@@ -121,7 +126,7 @@ export default {
 
   async mounted () {
 
-    const result = await fetchRealized();
+    const result = await fetchRealized(this.selectedEach);
     this.updateData(result);
     // each: "year"
     // realized: Array(1)
@@ -139,6 +144,8 @@ export default {
   methods: {
 
     updateData: function (rawData) {
+
+      console.info(rawData);
 
       this.selectedEach = rawData.each;
       this.winRate = Math.round(rawData['win_rate'] * 100);
@@ -173,7 +180,18 @@ export default {
 
     getRandomInt: function () {
       return Math.floor(Math.random() * (50 - 5 + 1)) + 5
-    }
+    },
+
+    onChangeSelect: async function () {
+
+      this.loading = true;
+
+      const result = await fetchRealized(this.selectedEach);
+      this.updateData(result);
+
+      this.loading = false;
+
+    },
 
   },
 
