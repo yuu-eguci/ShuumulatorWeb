@@ -41,9 +41,6 @@
           <template #head(currentPrice)="">
             {{ $t('port.label.currentPrice') }}
           </template>
-          <template #head(profit)="">
-            {{ $t('port.label.profit') }}
-          </template>
         </b-table>
       </b-col>
       <b-col md="2" />
@@ -52,6 +49,39 @@
 </template>
 
 <script>
+import axiosUtils from '@/utils/axiosUtils';
+import Cookies from 'js-cookie';
+
+const fetchPortfolio = async function () {
+
+  // cookie から jwt token を取得します。
+  const token = Cookies.get('token');
+
+  // /api/v1/portfolio を取得します。
+  const axiosInstance = axiosUtils.createAxiosInstance(token);
+  const response = await axiosInstance.get('/api/v1/portfolio/1').catch(err => {
+    return err.response;
+  });
+  if (response.status !== 200) {
+    console.error(response);
+    return;
+  }
+  return response.data.tradings;
+
+};
+
+const changeFormatForMainTable = function (rawRecord) {
+
+  return {
+    code: rawRecord.code,
+    name: rawRecord.name,
+    boughtAt: rawRecord['bought_at'].slice(0, 10),
+    buy: rawRecord.buy.toLocaleString(),
+    currentPrice: rawRecord['current_price'].toLocaleString(),
+  };
+
+};
+
 export default {
 
   name: 'Port',
@@ -92,18 +122,17 @@ export default {
           // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
+          thClass: 'text-center',
+          tdClass: 'text-right',
         },
         {
           key: 'currentPrice',
           // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
           sortable: true,
           visible: true,
-        },
-        {
-          key: 'profit',
-          // NOTE: label はここでは定義しません。 i18n に対応するため template 内にひとつずつ定義します。
-          sortable: true,
-          visible: true,
+          thClass: 'text-center',
+          // NOTE: びっくりなんだけどこれで methods へアクセスできる。
+          tdClass: 'setCurrentPriceTdClass',
         },
       ],
 
@@ -111,6 +140,7 @@ export default {
 
   },
 
+  // NOTE: 定数にように利用する変数、 props から算出できる値は computed に定義するよう心がけます。
   computed: {
 
     // NOTE: Checkbox が fields.visible(ユーザ定義)を切り替え、
@@ -124,10 +154,12 @@ export default {
 
   async mounted () {
 
-    // 
+    const tradings = await fetchPortfolio();
+    this.mainTableItems = tradings.map(changeFormatForMainTable);
 
   },
 
+  // NOTE: 「methods に含めるのは template から利用する method のみ」原則を心がけます。
   methods: {
 
     // b-table の filter-function です。 true を返す行を表示します。
@@ -136,6 +168,17 @@ export default {
 
       // NOTE: 今回は filter が必要ない予定だけれど、まあ b-table のオマケとして記述してます。
       return true;
+
+    },
+
+    setCurrentPriceTdClass: function (value, key, item) {
+
+      // 価格が上がっている -> 赤。
+      if (item.currentPrice >= item.buy) {
+        return 'text-right text-danger';
+      }
+      // 価格が下がっている -> 緑。
+      return 'text-right text-success';
 
     },
 
