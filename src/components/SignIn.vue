@@ -48,7 +48,7 @@
 
 <script>
 import axiosUtils from '@/utils/axiosUtils';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
 export default {
 
