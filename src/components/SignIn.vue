@@ -26,6 +26,9 @@
           </template>
 
           <template #lead>
+            <strong>
+              Shuumulator-WEB |
+            </strong>
             {{ $t('signin') }}
           </template>
 
