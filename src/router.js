@@ -53,7 +53,6 @@ router.beforeEach(async (to, from, next) => {
 
   // cookie から jwt token を取得します。
   const token = Cookies.get('token');
-  console.info({ token });
 
   // なけりゃさっさと SignIn へ。
   if (!token) {
