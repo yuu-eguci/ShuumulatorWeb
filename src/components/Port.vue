@@ -7,11 +7,17 @@
           <b-button
             :to="'/'"
             variant="outline-primary"
-            class="btn-circle"
+            class="btn-circle mr-3"
             size="lg"
           >
             <b-icon icon="arrow-left" />
           </b-button>
+          <b-icon
+            v-if="loading"
+            icon="arrow-clockwise"
+            animation="spin"
+          />
+          {{ loadingText }}
         </div>
         <b-table
           ref="mainTable"
@@ -24,6 +30,8 @@
           sort-icon-left
           :responsive="true"
           class="text-nowrap mt-3"
+          :sort-by="'boughtAt'"
+          :sort-desc="true"
         >
           <!-- NOTE: $t を使うため script 内ではなく template 内でラベルを定義しています。 -->
           <template #head(code)="">
@@ -91,6 +99,8 @@ export default {
     return {
 
       // 演出のための data です。
+      loading: false,
+      loadingText: '',
 
       // b-table mainTable 用の data。
       mainTableItems: [],
@@ -154,8 +164,30 @@ export default {
 
   async mounted () {
 
+    this.loading = true;
+    let i = 0;
+    const intervalId2 = setInterval(() => {
+      i = i === 4 ? 0 : i + 1;
+      this.loadingText = 'Loading' + '.'.repeat(i);
+    }, 500);
+
     const tradings = await fetchPortfolio();
-    this.mainTableItems = tradings.map(changeFormatForMainTable);
+
+    // ただの演出のため、ちょっとずつ追加する。
+    const intervalId = setInterval(() => {
+
+      if (tradings.length === 0) {
+        this.loading = false;
+        this.loadingText = '';
+        clearInterval(intervalId);
+        clearInterval(intervalId2);
+        return;
+      }
+
+      this.mainTableItems.push(changeFormatForMainTable(tradings.pop()));
+
+    }, 200);
+
 
   },
 
