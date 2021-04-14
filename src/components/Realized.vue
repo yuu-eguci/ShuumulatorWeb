@@ -3,7 +3,23 @@
     <b-row>
       <b-col md="2" />
       <b-col md="8">
-        <b-row>
+        <div>
+          <b-button
+            :to="'/'"
+            variant="outline-primary"
+            class="btn-circle mr-3"
+            size="lg"
+          >
+            <b-icon icon="arrow-left" />
+          </b-button>
+          <b-icon
+            v-if="loading"
+            icon="arrow-clockwise"
+            animation="spin"
+          />
+          {{ loadingText }}
+        </div>
+        <b-row class="mt-3">
           <b-col md="6">
             <b-card
               no-body
@@ -41,7 +57,7 @@
                     { value: 'day', text: $t('realized.eachDay') },
                   ]"
                   :disabled="loading"
-                  @change="onChangeSelect"
+                  @change="fetchAndUpdateData"
                 />
               </b-card-text>
             </b-card>
@@ -100,6 +116,7 @@ export default {
 
       // 演出のための data です。
       loading: false,
+      loadingText: '',
 
       // 検索用の data です。
       selectedEach: 'year',
@@ -140,18 +157,7 @@ export default {
 
   async mounted () {
 
-    const result = await fetchRealized(this.selectedEach);
-    this.updateData(result);
-    // each: "year"
-    // realized: Array(1)
-    //   0: {gain: 13951.1, lost: 11385.4, label: "2021"}
-    // total_gain: 13951.1
-    // total_lost: 11385.4
-    // user_id: "1"
-    // win_rate: 0.6192560175054704
-
-    // TODO: まだ、ほしい chart のかたちになっていないが、それはのちに。
-    // this.fillData()
+    await this.fetchAndUpdateData();
 
   },
 
@@ -245,14 +251,25 @@ export default {
 
     },
 
-    onChangeSelect: async function () {
+    fetchAndUpdateData: async function () {
 
       this.loading = true;
+      let i = 0;
+      const intervalId = setInterval(() => {
+        i = i === 4 ? 0 : i + 1;
+        this.loadingText = 'Loading' + '.'.repeat(i);
+      }, 500);
 
       const result = await fetchRealized(this.selectedEach);
-      this.updateData(result);
 
-      this.loading = false;
+      setTimeout(() => {
+
+        this.updateData(result);
+        this.loading = false;
+        this.loadingText = '';
+        clearInterval(intervalId);
+
+      }, 2000);
 
     },
 
