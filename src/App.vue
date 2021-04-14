@@ -6,7 +6,10 @@
     <router-view />
     <b-row class="mt-5">
       <b-col md="4" />
-      <b-col md="4">
+      <b-col
+        md="4"
+        class="text-center"
+      >
         <b-form-select
           v-model="$i18n.locale"
           :options="[
@@ -15,6 +18,9 @@
           ]"
           size="sm"
         />
+        <div>
+          Copyright © 2021 All rights reserved, Yuu Eguci
+        </div>
       </b-col>
       <b-col md="4" />
     </b-row>
