@@ -26,6 +26,7 @@
           size="lg"
           block
           class="mt-5"
+          @click="onClickSignOutButton"
         >
           {{ $t('top.button3') }}
           <b-icon icon="box-arrow-right" />
@@ -37,6 +38,8 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie';
+
 export default {
 
   name: 'Top',
@@ -48,13 +51,27 @@ export default {
 
   },
 
+  // NOTE: 定数にように利用する変数、 props から算出できる値は computed に定義するよう心がけます。
+  computed: {
+
+  },
+
   async mounted () {
 
     // 
 
   },
 
+  // NOTE: 「methods に含めるのは template から利用する method のみ」原則を心がけます。
   methods: {
+
+    onClickSignOutButton: function () {
+
+      // 認証 token 削除と、サインインページへの移動。
+      Cookies.remove('token');
+      this.$router.push({ name: 'SignIn' });
+
+    },
 
   },
 
