@@ -112,7 +112,7 @@ export default {
         }
         // サインインに成功すると {token: jwt token} が返ってきます。
         // Cookie に保存する。
-        Cookies.set('token', response.data.token);
+        Cookies.set('token', response.data.token, { secure: true });
 
         this.animateUnlock();
 
