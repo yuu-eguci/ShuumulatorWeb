@@ -88,7 +88,7 @@ const fetchRealized = async function (each) {
 
   // /api/v1/realized を取得します。
   const axiosInstance = axiosUtils.createAxiosInstance(token);
-  const response = await axiosInstance.get('/api/v1/realized/1', {
+  const response = await axiosInstance.get('/api/v1/realized/1/', {
     params: {
       each,
     },

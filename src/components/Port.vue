@@ -68,7 +68,7 @@ const fetchPortfolio = async function () {
 
   // /api/v1/portfolio を取得します。
   const axiosInstance = axiosUtils.createAxiosInstance(token);
-  const response = await axiosInstance.get('/api/v1/portfolio/1').catch(err => {
+  const response = await axiosInstance.get('/api/v1/portfolio/1/').catch(err => {
     return err.response;
   });
   if (response.status !== 200) {
