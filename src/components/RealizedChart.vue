@@ -1,35 +1,47 @@
-<script>
-// 本 vue には template を書きません。
-import { Bar, mixins } from 'vue-chartjs';
-const { reactiveProp } = mixins;
+<template>
+  <div class="chart-container">
+    <canvas ref="canvas" />
+  </div>
+</template>
 
-export default {
+<script setup>
+import { onBeforeUnmount, onMounted, ref, toRaw, watch } from 'vue';
+import {
+  BarController, BarElement, CategoryScale, Chart, Legend,
+  LinearScale, LineController, LineElement, PointElement, Tooltip,
+} from 'chart.js';
 
-  name: 'RealizedChart',
+Chart.register(BarController, BarElement, CategoryScale, Legend, LinearScale, LineController, LineElement, PointElement, Tooltip);
 
-  extends: Bar,
+defineOptions({ name: 'RealizedChart' });
 
-  mixins: [reactiveProp],
+const props = defineProps({
+  chartData: { type: Object, required: true },
+});
 
-  // NOTE: renderChart で使っている chartData は mixin に渡される prop です。
-  //       そのためここの props に記述する必要がありません。
-  props: {
-    options: {
-      type: Object,
-      required: true,
-    },
+const OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: { stacked: true },
+    y: { stacked: true, beginAtZero: true },
   },
+};
 
-  mounted () {
+const canvas = ref(null);
+let chart = null;
+const plainData = () => structuredClone(toRaw(props.chartData));
 
-    if (this.chartData == {}) {
-      return;
-    }
+onMounted(() => {
+  chart = new Chart(canvas.value, { type: 'bar', data: plainData(), options: OPTIONS });
+});
 
-    // this.chartData is created in the mixin.
-    // If you want to pass options please create a local options object
-    this.renderChart(this.chartData, this.options);
-  },
+watch(() => props.chartData, () => {
+  chart.data = plainData();
+  chart.update();
+});
 
-}
+onBeforeUnmount(() => {
+  chart?.destroy();
+});
 </script>

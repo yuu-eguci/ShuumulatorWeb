@@ -1,37 +1,36 @@
 <template>
-  <div
-    id="app"
-    class="m-3"
-  >
-    <router-view />
-    <b-row class="mt-5">
-      <b-col md="4" />
-      <b-col
-        md="4"
-        class="text-center"
-      >
-        <b-form-select
-          v-model="$i18n.locale"
-          :options="[
-            { value: 'en', text: 'English' },
-            { value: 'ja', text: '日本語で OK' },
-          ]"
-          size="sm"
-        />
-        <div>
-          Copyright © 2021 All rights reserved, Yuu Eguci
-        </div>
-      </b-col>
-      <b-col md="4" />
-    </b-row>
+  <div class="m-3">
+    <RouterView />
+    <div class="row mt-5 justify-content-center">
+      <div class="col-md-4 text-center">
+        <select
+          v-model="locale"
+          data-test="locale"
+          class="form-select form-select-sm"
+          :aria-label="$t('common.language')"
+        >
+          <option value="en">
+            English
+          </option>
+          <option value="ja">
+            日本語で OK
+          </option>
+        </select>
+        <div>Copyright © 2021 All rights reserved, Yuu Eguci</div>
+      </div>
+    </div>
+    <AppNotifications />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
-}
-</script>
+<script setup>
+import { watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
+import AppNotifications from './components/AppNotifications.vue';
 
-<style>
-</style>
+const { locale } = useI18n({ useScope: 'global' });
+
+watchEffect(() => {
+  document.documentElement.lang = locale.value;
+});
+</script>

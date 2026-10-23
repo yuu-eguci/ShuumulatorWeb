@@ -1,0 +1,48 @@
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 35px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+.fade-pulse {
+  animation: fade-pulse 1.5s ease-in-out infinite;
+}
+
+.shake {
+  display: inline-block;
+  animation: shake 0.3s ease-in-out infinite;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px;
+}
+
+.toast-container {
+  z-index: 1080;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fade-pulse {
+  50% { opacity: 0.4; }
+}
+
+@keyframes shake {
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin, .fade-pulse, .shake { animation: none; }
+}
