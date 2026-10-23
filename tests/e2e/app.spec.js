@@ -127,8 +127,34 @@ test('API outage shows an error and keeps the page usable', async ({ page, conte
     return route.abort('connectionrefused');
   });
   await page.goto('/ShuumulatorWeb/port');
-  await expect(page).toHaveURL(/\/ShuumulatorWeb\/signin$/);
+  await expect(page).toHaveURL(/\/ShuumulatorWeb\/signin\?redirect=\/port$/);
   await expect(page.getByText('Could not reach the server.')).toBeVisible();
   await expect(page.getByLabel('Invitation code')).toBeEnabled();
   expect(blocked.every((url) => url.startsWith(API))).toBe(true);
+});
+
+test('a protected deep link survives the Pages 404 fallback and sign-in (offline)', async ({ page }) => {
+  const { blocked } = await offlineApi(page);
+  const response = await page.goto('/ShuumulatorWeb/realized?each=month');
+  expect(response.status()).toBe(404);
+  await expect(page).toHaveURL(/\/ShuumulatorWeb\/signin\?redirect=\/realized\?each=month$/);
+
+  await page.getByLabel('Invitation code').fill('the-code');
+  await page.getByRole('button', { name: 'Unlock' }).click();
+  await expect(page).toHaveURL(/\/ShuumulatorWeb\/realized\?each=month$/, { timeout: 10_000 });
+  await expect(page.locator('[data-test="realized"]')).toHaveText('Realized: -20YEN');
+
+  await page.reload();
+  await expect(page).toHaveURL(/\/ShuumulatorWeb\/realized\?each=month$/);
+  await expect(page.locator('[data-test="realized"]')).toHaveText('Realized: -20YEN');
+  expect(blocked).toEqual([]);
+});
+
+test('an off-site ?redirect= is ignored after sign-in (offline)', async ({ page }) => {
+  const { blocked } = await offlineApi(page);
+  await page.goto('/ShuumulatorWeb/signin?redirect=%2F%2Fevil.example');
+  await page.getByLabel('Invitation code').fill('the-code');
+  await page.getByRole('button', { name: 'Unlock' }).click();
+  await expect(page).toHaveURL(/\/ShuumulatorWeb\/$/, { timeout: 10_000 });
+  expect(blocked).toEqual([]);
 });

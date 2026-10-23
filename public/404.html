@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
   <head>
-    <script>
-      window.location.pathname = "/ShuumulatorWeb/";
-    </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>NotFound</title>
+    <title>Shuumulator-WEB</title>
+    <script>
+      // GitHub Pages は /ShuumulatorWeb/realized のようなパスにこのページを返します。
+      // 元のパスを ?p= に入れてアプリに渡し、アプリ側で元の URL に戻します (src/deepLink.js)。
+      (function () {
+        var base = '/ShuumulatorWeb';
+        var location = window.location;
+        var path = location.pathname.indexOf(base + '/') === 0 ? location.pathname.slice(base.length) : '/';
+        location.replace(base + '/?p=' + encodeURIComponent(path + location.search + location.hash));
+      })();
+    </script>
   </head>
   <body>
   </body>
