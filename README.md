@@ -39,7 +39,7 @@ npm run dev          # http://localhost:8080/ShuumulatorWeb/ (API は http://loc
 npm run lint
 npm test             # Vitest + ランタイムのバージョンチェック
 npx playwright install chromium   # 初回だけ
-npm run test:e2e     # ビルドしたアプリをブラウザで操作 (API はモック)
+npm run test:e2e     # Pages の 404 応答も含めてブラウザで確認 (API は mock)
 npm run build        # dist/ に出力
 ```
 
@@ -69,3 +69,10 @@ npm run build        # dist/ に出力
 `main` への push で CI (lint、テスト、e2e、ビルド、Docker ビルド) が走る。
 すべて通ったときだけ `GITHUB_TOKEN` で `gh-pages` ブランチに公開する。
 PR では公開しない。
+
+## 直リンクとリロード
+
+GitHub Pages は `/ShuumulatorWeb/realized` のようなパスに `404.html` を返す。
+`404.html` は元のパスを `?p=` に入れて `/ShuumulatorWeb/` に飛ばし、アプリが起動時に元の URL に戻す。
+サインインが必要なページを開いたときは、サインイン後にそのページに戻る。
+戻り先はアプリ内のパスだけで、外部の URL には飛ばない。

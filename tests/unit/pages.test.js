@@ -34,7 +34,21 @@ describe('router guard', () => {
     mock = mockApi({});
     app = await mountApp('/');
     expect(route()).toBe('SignIn');
+    expect(app.router.currentRoute.value.query).toEqual({});
     expect(mock.calls).toEqual([]);
+  });
+
+  test('a protected deep link is remembered as ?redirect= for after sign-in', async () => {
+    mock = mockApi({});
+    app = await mountApp('/realized?each=month');
+    expect(route()).toBe('SignIn');
+    expect(app.router.currentRoute.value.query).toEqual({ redirect: '/realized?each=month' });
+  });
+
+  test('an unknown path falls back to Top instead of a blank page', async () => {
+    mock = signedIn();
+    app = await mountApp('/no-such-page');
+    expect(route()).toBe('Top');
   });
 
   test('403 from the user check clears the token and goes to SignIn', async () => {
@@ -173,6 +187,29 @@ describe('SignIn', () => {
     await flushPromises();
     expect(Cookies.get('token')).toBe(fakeJwt(1));
     expect(route()).toBe('Top');
+  });
+
+  test.each([
+    ['/realized?each=month', 'Realized'],
+    ['//evil.example', 'Top'],
+    ['https://evil.example', 'Top'],
+    ['/signin', 'Top'],
+  ])('after sign-in ?redirect=%s goes to %s', async (redirect, expected) => {
+    mock = mockApi({
+      'POST /api-token-auth/': { status: 200, data: { token: fakeJwt(1) } },
+      ...USER_OK,
+      'GET /api/v1/realized/1/': { status: 200, data: { each: 'year', realized: [], win_rate: 0, total_gain: 0, total_lost: 0 } },
+    });
+    app = await mountApp(`/signin?redirect=${encodeURIComponent(redirect)}`);
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    await submit('the-code');
+    await vi.advanceTimersByTimeAsync(3000);
+    vi.useRealTimers();
+    await flushPromises();
+    expect(route()).toBe(expected);
+    if (expected === 'Realized') {
+      expect(app.router.currentRoute.value.fullPath).toBe('/realized?each=month');
+    }
   });
 
   test.each([[{ status: 403 }, 'rejected'], ['network-error', 'reach']])('failure %j re-enables the input and explains why', async (failure, word) => {

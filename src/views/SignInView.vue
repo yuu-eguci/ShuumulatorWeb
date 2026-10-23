@@ -44,14 +44,16 @@
 
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { signIn } from '../api';
 import { setToken } from '../auth';
+import { internalPath } from '../deepLink';
 import { notify } from '../notify';
 
 const ANIMATION_STEP_MS = 1500;
 
 const router = useRouter();
+const route = useRoute();
 const input = ref(null);
 const code = ref('');
 const loading = ref(false);
@@ -97,6 +99,13 @@ async function submit() {
   locked.value = false;
   notify('success', 'notify.signInSucceeded');
   await wait(ANIMATION_STEP_MS);
-  router.push({ name: 'Top' });
+  router.push(destination());
+}
+
+// ?redirect= がアプリ内の別ページならそこへ、それ以外は Top へ戻ります。
+function destination() {
+  const path = internalPath(route.query.redirect);
+  const name = path && router.resolve(path).name;
+  return name && name !== 'SignIn' ? path : { name: 'Top' };
 }
 </script>

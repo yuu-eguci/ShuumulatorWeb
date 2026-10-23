@@ -8,7 +8,11 @@ const routes = [
   { path: '/signin', name: 'SignIn', component: () => import('./views/SignInView.vue'), meta: { isPublic: true } },
   { path: '/port', name: 'Port', component: () => import('./views/PortView.vue') },
   { path: '/realized', name: 'Realized', component: () => import('./views/RealizedView.vue') },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
+
+// サインイン後に戻れるよう、開こうとしたページを ?redirect= に残します。
+const toSignIn = (to) => ({ name: 'SignIn', query: to.fullPath === '/' ? {} : { redirect: to.fullPath } });
 
 export function createAppRouter(history) {
   const router = createRouter({ history, routes });
@@ -21,7 +25,7 @@ export function createAppRouter(history) {
     const { token, userId } = currentSession();
     if (!userId) {
       clearToken();
-      return { name: 'SignIn' };
+      return toSignIn(to);
     }
     const result = await fetchUser(token, userId);
     if (result.ok) {
@@ -34,7 +38,7 @@ export function createAppRouter(history) {
     } else {
       notify('error', 'notify.loadFailed');
     }
-    return { name: 'SignIn' };
+    return toSignIn(to);
   });
 
   return router;
