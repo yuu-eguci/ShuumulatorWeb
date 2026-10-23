@@ -1,5 +1,9 @@
 {
-  "signin": "This page is solidly locked. Type your invitation code.",
+  "signin": {
+    "lead": "This page is solidly locked. Type your invitation code.",
+    "codeLabel": "Invitation code",
+    "submit": "Unlock"
+  },
   "top": {
     "button1": "View my portfolio",
     "button2": "How is it going on so far?",
@@ -11,9 +15,9 @@
       "name": "Name",
       "boughtAt": "Bought at",
       "buy": "Buy",
-      "currentPrice": "Current price",
-      "profit": "profit or loss"
-    }
+      "currentPrice": "Current price"
+    },
+    "empty": "No holdings to show."
   },
   "realized": {
     "winRate": "Current win rate",
@@ -22,9 +26,26 @@
     "realized": "Realized",
     "graphScale": "Scales of the graph",
     "yen": "YEN",
-    "eachYear": "Each year",
-    "eachMonth": "Each month",
-    "eachWeek": "Each week",
-    "eachDay": "Each day"
+    "year": "Each year",
+    "month": "Each month",
+    "week": "Each week",
+    "day": "Each day"
+  },
+  "common": {
+    "loading": "Loading",
+    "back": "Back to top",
+    "language": "Language"
+  },
+  "notify": {
+    "verifying": "Verifying your invitation code...",
+    "signInSucceeded": "SignIn succeeded.",
+    "signInRejected": "Invitation code rejected.",
+    "signedOut": "You have successfully signed out. Bye bye.",
+    "portfolioLoading": "Fetching your portfolio. Please wait...",
+    "portfolioLoaded": "Your portfolio successfully loaded.",
+    "realizedLoading": "Fetching your realized profit, and loss, sometimes...",
+    "realizedLoaded": "Your realized profit and loss successfully loaded.",
+    "loadFailed": "Failed to load the data. Please try again later.",
+    "networkError": "Could not reach the server. Please try again later."
   }
 }

@@ -1,0 +1,7 @@
+.git
+node_modules
+dist
+dist-e2e
+test-results
+playwright-report
+docs/iona-kest.md

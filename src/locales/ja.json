@@ -1,5 +1,9 @@
 {
-  "signin": "セキュリティ保護されたページです。招待コードをタイプしてください。",
+  "signin": {
+    "lead": "招待コードを入力してね。",
+    "codeLabel": "招待コード",
+    "submit": "解錠"
+  },
   "top": {
     "button1": "ポートフォリオを閲覧",
     "button2": "今んとこどんな感じ?",
@@ -11,9 +15,9 @@
       "name": "銘柄",
       "boughtAt": "購入日",
       "buy": "購入価格",
-      "currentPrice": "現在価格",
-      "profit": "損益"
-    }
+      "currentPrice": "現在価格"
+    },
+    "empty": "保有銘柄はないよ。"
   },
   "realized": {
     "winRate": "現在の勝率",
@@ -22,9 +26,26 @@
     "realized": "実現損益",
     "graphScale": "グラフの目盛り",
     "yen": "円",
-    "eachYear": "年ごと",
-    "eachMonth": "月ごと",
-    "eachWeek": "週ごと",
-    "eachDay": "日ごと"
+    "year": "年ごと",
+    "month": "月ごと",
+    "week": "週ごと",
+    "day": "日ごと"
+  },
+  "common": {
+    "loading": "読み込み中",
+    "back": "トップに戻る",
+    "language": "言語"
+  },
+  "notify": {
+    "verifying": "招待コードを確認中...",
+    "signInSucceeded": "サインインしたよ。",
+    "signInRejected": "招待コードが違うみたい。",
+    "signedOut": "サインアウトしたよ。またね。",
+    "portfolioLoading": "ポートフォリオを取得中...",
+    "portfolioLoaded": "ポートフォリオを読み込んだよ。",
+    "realizedLoading": "実現損益を取得中...",
+    "realizedLoaded": "実現損益を読み込んだよ。",
+    "loadFailed": "データを読み込めなかったよ。少し待ってからもう一度試してね。",
+    "networkError": "サーバにつながらないよ。少し待ってからもう一度試してね。"
   }
 }
