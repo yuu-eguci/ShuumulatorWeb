@@ -66,9 +66,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { fetchRealized } from '../api';
+import type { ChartData } from 'chart.js';
+import { fetchRealized, type RealizedEach, type RealizedPeriod } from '../api';
 import { currentSession } from '../auth';
 import { formatSignedYen, formatYen } from '../format';
 import { notify } from '../notify';
@@ -77,17 +78,17 @@ import LoadingIndicator from '../components/LoadingIndicator.vue';
 import RealizedChart from '../components/RealizedChart.vue';
 
 // API の each パラメータと i18n キー (realized.<each>) を兼ねます。
-const SCALES = ['year', 'month', 'week', 'day'];
+const SCALES: RealizedEach[] = ['year', 'month', 'week', 'day'];
 // API からは時系列順で届くので、グラフには最後の 12 件だけ出します。
 const CHART_PERIODS = 12;
 
 const loading = ref(false);
-const each = ref('year');
+const each = ref<RealizedEach>('year');
 const summary = ref({ winRate: 0, totalGain: 0, totalLost: 0 });
-const chartData = ref({ labels: [], datasets: [] });
+const chartData = ref<ChartData<'bar' | 'line', number[], string>>({ labels: [], datasets: [] });
 let latestRequest = 0;
 
-const toChartData = (realized) => {
+const toChartData = (realized: RealizedPeriod[]): ChartData<'bar' | 'line', number[], string> => {
   const recent = realized.slice(-CHART_PERIODS);
   return {
     labels: recent.map((x) => x.label),

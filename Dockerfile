@@ -7,10 +7,10 @@ WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 
-# docker build --target test . で lint、unit テスト、ランタイムチェック、ビルドを実行します。
+# docker build --target test . で lint、型チェック、unit テスト、ランタイムチェック、ビルドを実行します。
 FROM deps AS test
 COPY . .
-RUN npm run lint && npm test && npm run build
+RUN npm run lint && npm run typecheck && npm test && npm run build
 
 FROM deps AS build
 COPY . .

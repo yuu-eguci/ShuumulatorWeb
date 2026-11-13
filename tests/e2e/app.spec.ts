@@ -1,7 +1,7 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const API = 'http://api.invalid';
-const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
+const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString('base64url');
 const TOKEN = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({ user_id: 1, exp: 9999999999 })}.signature`;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -10,9 +10,9 @@ const CORS = {
 };
 
 // localhost (vite preview) 以外への通信はすべて遮断し、http://api.invalid だけモックで応答します。
-async function offlineApi(page) {
-  const apiCalls = [];
-  const blocked = [];
+async function offlineApi(page: Page) {
+  const apiCalls: { method: string; path: string; auth: string | undefined }[] = [];
+  const blocked: string[] = [];
   await page.route('**/*', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
@@ -27,7 +27,7 @@ async function offlineApi(page) {
       return route.fulfill({ status: 204, headers: CORS });
     }
     apiCalls.push({ method: request.method(), path: url.pathname + url.search, auth: request.headers().authorization });
-    const json = (status, body) => route.fulfill({ status, headers: CORS, json: body });
+    const json = (status: number, body: object) => route.fulfill({ status, headers: CORS, json: body });
     const key = `${request.method()} ${url.pathname}`;
     if (key === 'POST /api-token-auth/') {
       return request.postDataJSON().code === 'the-code' ? json(200, { token: TOKEN }) : json(403, { detail: 'Authentication failed' });
@@ -112,12 +112,12 @@ test('sign in, browse portfolio and realized, switch locale, sign out (offline)'
   for (const call of apiCalls.filter((c) => c.path !== '/api-token-auth/')) {
     expect(call.auth).toBe(`JWT ${TOKEN}`);
   }
-  expect(apiCalls.find((c) => c.path === '/api-token-auth/').auth).toBeUndefined();
+  expect(apiCalls.find((c) => c.path === '/api-token-auth/')!.auth).toBeUndefined();
 });
 
 test('API outage shows an error and keeps the page usable', async ({ page, context }) => {
   await context.addCookies([{ name: 'token', value: TOKEN, url: 'http://localhost:4173' }]);
-  const blocked = [];
+  const blocked: string[] = [];
   await page.route('**/*', (route) => {
     const url = new URL(route.request().url());
     if (url.hostname === 'localhost') {
@@ -136,7 +136,7 @@ test('API outage shows an error and keeps the page usable', async ({ page, conte
 test('a protected deep link survives the Pages 404 fallback and sign-in (offline)', async ({ page }) => {
   const { blocked } = await offlineApi(page);
   const response = await page.goto('/ShuumulatorWeb/realized?each=month');
-  expect(response.status()).toBe(404);
+  expect(response?.status()).toBe(404);
   await expect(page).toHaveURL(/\/ShuumulatorWeb\/signin\?redirect=\/realized\?each=month$/);
 
   await page.getByLabel('Invitation code').fill('the-code');

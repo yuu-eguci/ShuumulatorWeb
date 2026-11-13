@@ -19,9 +19,9 @@
   </div>
 </template>
 
-<script setup>
-import { dismiss, notifications } from '../notify';
+<script setup lang="ts">
+import { dismiss, notifications, type NotificationType } from '../notify';
 
-const VARIANTS = { info: 'info', success: 'success', error: 'danger' };
-const ICONS = { info: 'bi-info-circle', success: 'bi-check-circle', error: 'bi-exclamation-triangle' };
+const VARIANTS: Record<NotificationType, string> = { info: 'info', success: 'success', error: 'danger' };
+const ICONS: Record<NotificationType, string> = { info: 'bi-info-circle', success: 'bi-check-circle', error: 'bi-exclamation-triangle' };
 </script>

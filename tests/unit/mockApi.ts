@@ -1,12 +1,24 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
+
+export interface MockResponse {
+  status: number;
+  data?: unknown;
+}
+
+type MockRoute = MockResponse | 'network-error' | ((config: InternalAxiosRequestConfig) => MockResponse);
+
+export interface MockCall {
+  key: string;
+  config: InternalAxiosRequestConfig;
+}
 
 // 'METHOD /path/' をキーにしたレスポンス定義で axios の adapter を差し替えます。
 // 定義にないリクエストは unexpected に記録して、テスト側で失敗させます。
-export function mockApi(routes) {
-  const calls = [];
-  const unexpected = [];
+export function mockApi(routes: Record<string, MockRoute>) {
+  const calls: MockCall[] = [];
+  const unexpected: string[] = [];
   axios.defaults.adapter = async (config) => {
-    const key = `${config.method.toUpperCase()} ${config.url}`;
+    const key = `${config.method!.toUpperCase()} ${config.url}`;
     calls.push({ key, config });
     if (!(key in routes)) {
       unexpected.push(key);
@@ -16,7 +28,7 @@ export function mockApi(routes) {
     if (route === 'network-error') {
       throw new AxiosError('Network Error', AxiosError.ERR_NETWORK, config);
     }
-    const response = { data: route.data ?? null, status: route.status, statusText: '', headers: {}, config, request: {} };
+    const response: AxiosResponse = { data: route.data ?? null, status: route.status, statusText: '', headers: {}, config, request: {} };
     if (route.status >= 200 && route.status < 300) {
       return response;
     }
@@ -25,8 +37,10 @@ export function mockApi(routes) {
   return { calls, unexpected };
 }
 
+export type ApiMock = ReturnType<typeof mockApi>;
+
 // payload が {user_id} の、署名なしのダミー JWT です。
 export function fakeJwt(userId = 1) {
-  const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
+  const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString('base64url');
   return `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode({ user_id: userId, exp: 9999999999 })}.signature`;
 }

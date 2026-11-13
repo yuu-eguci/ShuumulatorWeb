@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test } from 'vitest';
 import { fetchPortfolio, fetchRealized, fetchUser, signIn } from '@/api';
-import { mockApi } from './mockApi';
+import { mockApi, type ApiMock } from './mockApi';
 
-let mock;
+let mock: ApiMock;
 afterEach(() => {
   expect(mock.unexpected).toEqual([]);
 });
