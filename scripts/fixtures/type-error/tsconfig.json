@@ -1,0 +1,6 @@
+{
+  // scripts/typecheck.test.js が使います。アプリと同じ設定で、意図的な型エラーを検出できるかを確かめます。
+  "extends": "../../../tsconfig.app.json",
+  "compilerOptions": { "tsBuildInfoFile": null },
+  "include": ["*.ts", "*.vue"]
+}

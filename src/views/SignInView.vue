@@ -42,9 +42,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router';
 import { signIn } from '../api';
 import { setToken } from '../auth';
 import { internalPath } from '../deepLink';
@@ -54,20 +54,20 @@ const ANIMATION_STEP_MS = 1500;
 
 const router = useRouter();
 const route = useRoute();
-const input = ref(null);
+const input = ref<HTMLInputElement | null>(null);
 const code = ref('');
 const loading = ref(false);
 const locked = ref(true);
 const unlocking = ref(false);
 
-let timer = null;
+let timer: ReturnType<typeof setTimeout> | undefined;
 let unmounted = false;
 // ページを離れたら timer を止めます。止めた wait は resolve されないので、その後の遷移も起きません。
-const wait = (ms) => new Promise((resolve) => {
+const wait = (ms: number) => new Promise((resolve) => {
   timer = setTimeout(resolve, ms);
 });
 
-onMounted(() => input.value.focus());
+onMounted(() => input.value!.focus());
 onBeforeUnmount(() => {
   unmounted = true;
   clearTimeout(timer);
@@ -103,9 +103,9 @@ async function submit() {
 }
 
 // ?redirect= がアプリ内の別ページならそこへ、それ以外は Top へ戻ります。
-function destination() {
+function destination(): RouteLocationRaw {
   const path = internalPath(route.query.redirect);
   const name = path && router.resolve(path).name;
-  return name && name !== 'SignIn' ? path : { name: 'Top' };
+  return path && name && name !== 'SignIn' ? path : { name: 'Top' };
 }
 </script>

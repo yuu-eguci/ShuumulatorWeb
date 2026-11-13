@@ -4,10 +4,11 @@ import Cookies from 'js-cookie';
 import en from '@/locales/en.json';
 import ja from '@/locales/ja.json';
 import { clearNotifications } from '@/notify';
+import type { ApiMock, MockResponse } from './mockApi';
 import { fakeJwt, mockApi, mountApp } from './helpers';
 
-let mock;
-let app;
+let mock: ApiMock;
+let app: Awaited<ReturnType<typeof mountApp>>;
 
 beforeEach(() => {
   Cookies.remove('token');
@@ -16,13 +17,11 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
-  app?.wrapper.unmount();
-  app = undefined;
   expect(mock.unexpected).toEqual([]);
 });
 
 const USER_OK = { 'GET /api/v1/user/1/': { status: 200, data: { hello: true } } };
-const signedIn = (routes = {}) => {
+const signedIn = (routes: Parameters<typeof mockApi>[0] = {}) => {
   Cookies.set('token', fakeJwt(1));
   return mockApi({ ...USER_OK, ...routes });
 };
@@ -64,7 +63,7 @@ describe('router guard', () => {
     mock = mockApi({ 'GET /api/v1/user/1/': 'network-error' });
     app = await mountApp('/');
     expect(route()).toBe('SignIn');
-    expect(toasts().at(-1).classes()).toContain('text-bg-danger');
+    expect(toasts().at(-1)!.classes()).toContain('text-bg-danger');
   });
 
   test('a server error keeps the token, goes to SignIn and shows an error', async () => {
@@ -73,7 +72,7 @@ describe('router guard', () => {
     app = await mountApp('/');
     expect(route()).toBe('SignIn');
     expect(Cookies.get('token')).toBe(fakeJwt(1));
-    expect(toasts().at(-1).classes()).toContain('text-bg-danger');
+    expect(toasts().at(-1)!.classes()).toContain('text-bg-danger');
   });
 
   test('a valid session stays on Top', async () => {
@@ -94,7 +93,7 @@ describe('locale', () => {
   });
 
   test('en and ja define the same keys', () => {
-    const keys = (obj, prefix = '') => Object.entries(obj).flatMap(([k, v]) => (
+    const keys = (obj: object, prefix = ''): string[] => Object.entries(obj).flatMap(([k, v]) => (
       typeof v === 'object' ? keys(v, `${prefix}${k}.`) : [`${prefix}${k}`]
     )).sort();
     expect(keys(ja)).toEqual(keys(en));
@@ -127,11 +126,11 @@ describe('Port', () => {
     expect(app.wrapper.findAll('tbody tr').map((r) => r.find('td').text())).toEqual(['1001', '1002']);
   });
 
-  test.each([[{ status: 500 }], ['network-error']])('API failure %j stops loading and shows an error', async (failure) => {
+  test.each<[MockResponse | 'network-error']>([[{ status: 500 }], ['network-error']])('API failure %j stops loading and shows an error', async (failure) => {
     mock = signedIn({ 'GET /api/v1/portfolio/1/': failure });
     app = await mountApp('/port');
     expect(app.wrapper.find('[data-test="loading"]').exists()).toBe(false);
-    expect(toasts().at(-1).classes()).toContain('text-bg-danger');
+    expect(toasts().at(-1)!.classes()).toContain('text-bg-danger');
     expect(app.wrapper.findAll('tbody tr [data-test="current-price"]')).toHaveLength(0);
   });
 });
@@ -143,7 +142,7 @@ describe('Realized', () => {
   test('shows totals with a single sign and charts the last 12 periods', async () => {
     mock = signedIn({ 'GET /api/v1/realized/1/': { status: 200, data: body } });
     app = await mountApp('/realized');
-    const text = (name) => app.wrapper.find(`[data-test="${name}"]`).text();
+    const text = (name: string) => app.wrapper.find(`[data-test="${name}"]`).text();
     expect(text('win-rate')).toContain('46%');
     expect(text('total-gain')).toContain('10');
     expect(text('total-lost')).toContain('30');
@@ -151,7 +150,7 @@ describe('Realized', () => {
     expect(text('realized')).not.toContain('--');
     const chartData = app.wrapper.findComponent({ name: 'RealizedChart' }).props('chartData');
     expect(chartData.labels).toEqual(realized.slice(-12).map((x) => x.label));
-    expect(chartData.datasets.map((d) => d.data[0])).toEqual([50, -25, 25]);
+    expect(chartData.datasets.map((d: { data: number[] }) => d.data[0])).toEqual([50, -25, 25]);
   });
 
   test('changing the scale refetches with each=<scale>', async () => {
@@ -162,17 +161,17 @@ describe('Realized', () => {
     expect(mock.calls.filter((c) => c.key === 'GET /api/v1/realized/1/').map((c) => c.config.params.each)).toEqual(['year', 'month']);
   });
 
-  test.each([[{ status: 500 }], ['network-error']])('API failure %j stops loading and shows an error', async (failure) => {
+  test.each<[MockResponse | 'network-error']>([[{ status: 500 }], ['network-error']])('API failure %j stops loading and shows an error', async (failure) => {
     mock = signedIn({ 'GET /api/v1/realized/1/': failure });
     app = await mountApp('/realized');
     expect(app.wrapper.find('[data-test="loading"]').exists()).toBe(false);
     expect(app.wrapper.find('[data-test="each"]').attributes('disabled')).toBeUndefined();
-    expect(toasts().at(-1).classes()).toContain('text-bg-danger');
+    expect(toasts().at(-1)!.classes()).toContain('text-bg-danger');
   });
 });
 
 describe('SignIn', () => {
-  const submit = async (code) => {
+  const submit = async (code: string) => {
     await app.wrapper.find('[data-test="invitation-code"]').setValue(code);
     await app.wrapper.find('form').trigger('submit');
   };
@@ -212,13 +211,13 @@ describe('SignIn', () => {
     }
   });
 
-  test.each([[{ status: 403 }, 'rejected'], ['network-error', 'reach']])('failure %j re-enables the input and explains why', async (failure, word) => {
+  test.each<[MockResponse | 'network-error', string]>([[{ status: 403 }, 'rejected'], ['network-error', 'reach']])('failure %j re-enables the input and explains why', async (failure, word) => {
     mock = mockApi({ 'POST /api-token-auth/': failure });
     app = await mountApp('/signin');
     await submit('wrong');
     await flushPromises();
     expect(app.wrapper.find('[data-test="invitation-code"]').attributes('disabled')).toBeUndefined();
-    expect(toasts().at(-1).text()).toContain(word);
+    expect(toasts().at(-1)!.text()).toContain(word);
     expect(Cookies.get('token')).toBeUndefined();
     expect(route()).toBe('SignIn');
   });
@@ -233,6 +232,5 @@ describe('SignIn', () => {
     app.wrapper.unmount();
     await vi.advanceTimersByTimeAsync(5000);
     expect(push).not.toHaveBeenCalled();
-    app = undefined;
   });
 });

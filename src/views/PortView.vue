@@ -60,16 +60,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { fetchPortfolio } from '../api';
+import { fetchPortfolio, type Trading } from '../api';
 import { currentSession } from '../auth';
 import { formatYen, priceTrendClass } from '../format';
 import { notify } from '../notify';
 import BackButton from '../components/BackButton.vue';
 import LoadingIndicator from '../components/LoadingIndicator.vue';
 
-const COLUMNS = [
+interface Row {
+  code: string;
+  name: string;
+  boughtAt: string;
+  buy: number;
+  currentPrice: number;
+}
+
+type SortKey = keyof Row;
+
+const COLUMNS: { key: SortKey; numeric?: boolean }[] = [
   { key: 'code' },
   { key: 'name' },
   { key: 'boughtAt' },
@@ -78,11 +88,11 @@ const COLUMNS = [
 ];
 
 const loading = ref(true);
-const rows = ref([]);
-const sort = ref({ key: 'boughtAt', desc: true });
+const rows = ref<Row[]>([]);
+const sort = ref<{ key: SortKey; desc: boolean }>({ key: 'boughtAt', desc: true });
 
 // 金額は数値のまま持ち、表示するときだけ整形します。
-const toRow = (trading) => ({
+const toRow = (trading: Trading): Row => ({
   code: trading.code,
   name: trading.name,
   boughtAt: String(trading.bought_at).slice(0, 10),
@@ -98,7 +108,7 @@ const sortedRows = computed(() => {
   });
 });
 
-function sortBy(key) {
+function sortBy(key: SortKey) {
   sort.value = { key, desc: sort.value.key === key ? !sort.value.desc : false };
 }
 

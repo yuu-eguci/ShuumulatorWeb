@@ -7,6 +7,7 @@ import { extname, join, resolve, sep } from 'node:path';
 const [root = 'dist-e2e', port = '4173'] = process.argv.slice(2);
 const BASE = '/ShuumulatorWeb/';
 const DIR = resolve(root);
+/** @type {Record<string, string>} */
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -16,6 +17,7 @@ const TYPES = {
   '.woff2': 'font/woff2',
 };
 
+/** @param {string} pathname */
 async function findFile(pathname) {
   if (!pathname.startsWith(BASE)) {
     return null;
@@ -35,7 +37,7 @@ async function findFile(pathname) {
 }
 
 createServer(async (request, response) => {
-  const { pathname } = new URL(request.url, 'http://localhost');
+  const { pathname } = new URL(/** @type {string} */ (request.url), 'http://localhost');
   if (pathname === BASE.slice(0, -1)) {
     response.writeHead(301, { Location: BASE }).end();
     return;

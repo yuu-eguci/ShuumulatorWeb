@@ -4,10 +4,12 @@ Shuumulator のポートフォリオと実現損益を表示する Web アプリ
 
 - Docker: 対応!
 - Runtime: Node.js 24.22.1 (LTS)。`.nvmrc`、`package.json` (`engines` / `volta`)、`Dockerfile`、GitHub Actions で同じバージョンを使う
+- Language: TypeScript (`strict`)。`.vue` は `<script setup lang="ts">` を使用します。
 - Framework: Vue 3 + Vite 8、vue-router 5、vue-i18n 11、Bootstrap 5、Chart.js 4、axios
-- Lint: ESLint 10 (flat config) + eslint-plugin-vue
+- Lint: ESLint 10 (flat config) + eslint-plugin-vue + typescript-eslint
+- Typecheck: vue-tsc。`src`、テスト、設定ファイルを検査します。Node で直接実行する `scripts/*.js` と `tests/e2e/pages-server.js` は JavaScript のまま `checkJs` で検査します。
 - Test: Vitest + Vue Test Utils (unit)、Playwright (ブラウザ)。API はすべてオフラインの mock を使う
-- Package manager: npm (`package-lock.json` + `npm ci`)
+- Package manager: npm (`package-lock.json` + `npm ci`)。`overrides` で開発用ツールが使う `minimatch` と `glob` を脆弱性修正済みのメジャーにそろえ、CI の `npm audit` を通す
 
 ## GitHub Pages
 
@@ -18,7 +20,7 @@ Shuumulator のポートフォリオと実現損益を表示する Web アプリ
 ### Docker
 
 ```bash
-# lint、unit テスト、ランタイムチェック、ビルドをコンテナ内で実行
+# lint、型チェック、unit テスト、ランタイムチェック、ビルドをコンテナ内で実行
 docker build --target test -t shuumulator-web:test .
 
 # ビルドした静的ファイルを nginx で配信
@@ -37,7 +39,8 @@ nvm なら `nvm use` を実行してね。
 npm ci
 npm run dev          # http://localhost:8080/ShuumulatorWeb/ (API は http://localhost:8000)
 npm run lint
-npm test             # Vitest + ランタイムのバージョンチェック
+npm run typecheck    # vue-tsc で .ts と .vue を型チェック
+npm test             # Vitest + ランタイムのバージョンチェック + 型チェック対象の確認
 npx playwright install chromium   # 初回だけ
 npm run test:e2e     # Pages の 404 応答も含めてブラウザで確認 (API は mock)
 npm run build        # dist/ に出力
@@ -66,7 +69,7 @@ npm run build        # dist/ に出力
 
 ## 公開
 
-`main` への push で CI (lint、テスト、e2e、ビルド、Docker ビルド) が走る。
+`main` への push で CI (lint、型チェック、テスト、e2e、ビルド、Docker ビルド) が走る。
 すべて通ったときだけ `GITHUB_TOKEN` で `gh-pages` ブランチに公開する。
 PR では公開しない。
 
